@@ -4,6 +4,10 @@
 
 flag：每天记录log，提交代码
 
+## 2021/05/24 (day 2)
+
+1、记录oncontextmenu，会影响手机端文字选中的菜单
+
 ## 2021/05/23 (day 1)
 
 1、记录jdk File对象getPath、getAbsolutePath、getCanonicalPath的区别

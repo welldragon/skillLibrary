@@ -1,4 +1,4 @@
-# 各种path和name的方法分不清
+# 各种getPath方法分不清
 
 ## 1、通过path String计算得到
 ```java

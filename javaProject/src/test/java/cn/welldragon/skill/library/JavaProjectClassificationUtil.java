@@ -1,17 +1,26 @@
 package cn.welldragon.skill.library;
 
+import com.google.common.io.Files;
+import lombok.SneakyThrows;
 import org.junit.Test;
 
 import java.io.File;
+import java.nio.charset.Charset;
+import java.util.List;
 import java.util.function.Consumer;
 
 public class JavaProjectClassificationUtil {
     @Test
+    @SneakyThrows
     public void test() {
         String javaSrcDirPath = "/Users/huangpeijie/Documents/git_ke/helicarrier/jy-helicarrier-start/src/main";
         File javaSrcDirFile = new File(javaSrcDirPath);
         recursiveJavaFile(javaSrcDirFile, file -> {
             System.out.println(file.getAbsolutePath());
+            List<String> lines = Files.readLines(file, Charset.defaultCharset());
+            for (String line : lines) {
+                System.out.println(line);
+            }
         });
     }
 
@@ -20,16 +29,16 @@ public class JavaProjectClassificationUtil {
      *
      * @param pFile
      */
-    public void recursiveJavaFile(File pFile, Consumer<File> javaFileconsumer) {
+    public void recursiveJavaFile(File pFile, Consumer<File> javaFileConsumer) {
         if (pFile == null) return;
         if (pFile.getName().startsWith(".")) return;
         if (pFile.isDirectory()) {
             for (File file : pFile.listFiles()) {
-                recursiveJavaFile(file, javaFileconsumer);
+                recursiveJavaFile(file, javaFileConsumer);
             }
         } else {
             if (pFile.getName().endsWith(".java")) {
-                javaFileconsumer.accept(pFile);
+                javaFileConsumer.accept(pFile);
             }
         }
     }

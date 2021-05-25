@@ -1,29 +1,56 @@
 package cn.welldragon.skill.library;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.io.Files;
+import lombok.SneakyThrows;
 import org.junit.Test;
 
 import java.io.File;
 import java.nio.charset.Charset;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.function.Consumer;
 
 public class JavaProjectClassificationUtil {
     @Test
-    public void test() {
-        String javaSrcDirPath = "/Users/huangpeijie/Documents/git_ke/helicarrier/jy-helicarrier-start/src/main";
-        File javaSrcDirFile = new File(javaSrcDirPath);
+    public void findAllImport() {
         Set<String> importSet = new TreeSet<>();
+        List<String> ignorePrefixList = ImmutableList.of(
+                "com.ke", "com.lianjia", "com.icbc"
+                , "java.io", "java.awt", "java.text", "java.sql", "java.util" // JDK
+                , "cn.smallbun.screw" // 数据库表结构文档生成工具
+                , "com.actionsoft.bpms", "com.actionsoft.sdk" // ke流程中心
+                , "com.alibaba.csp.sentinel" // sentinel 熔断降级
+                , "com.alibaba.druid" // druid 数据库连接池
+                , "com.alibaba.excel", "com.alibaba.easyexcel" // easyexcel Excel工具
+                , "com.alibaba.fastjson" // fastjson json工具
+                , "com.alibaba.dubbo" // dubbo RPC调用
+        );
+        for (String javaSrcDirPath : new String[]{
+                "../../../git_ke"
+        }) {
+            findAllImportInDir(javaSrcDirPath, importSet, ignorePrefixList);
+        }
+        System.out.println("size: " + importSet.size());
+        importSet.forEach(o -> System.out.println(o));
+    }
+
+    @SneakyThrows
+    public void findAllImportInDir(String javaSrcDirPath, Set<String> importSet, List<String> ignorePrefixList) {
+        File javaSrcDirFile = new File(javaSrcDirPath);
+//        System.out.println(javaSrcDirFile.getCanonicalPath());
         recursiveJavaFile(javaSrcDirFile, file -> {
             try {
-//                System.out.println(file.getAbsolutePath());
+//                System.out.println(file.getCanonicalPath());
                 List<String> lines = Files.readLines(file, Charset.defaultCharset());
                 for (String line : lines) {
                     line = line.trim();
-                    if (line.startsWith("import")) {
-                        importSet.add(line);
+                    if (line.startsWith("import") && !line.startsWith("import static")) {
+                        String[] words = line.split(" ");
+                        String importClass = words[1].substring(0, words[1].length() - 1);
+                        for (String ignorePrefix : ignorePrefixList) {
+                            if (importClass.startsWith(ignorePrefix)) return;
+                        }
+                        importSet.add(importClass);
 //                        System.out.println(line);
                     }
                 }
@@ -31,7 +58,6 @@ public class JavaProjectClassificationUtil {
                 e.printStackTrace();
             }
         });
-        importSet.forEach(o -> System.out.println(o));
     }
 
     /**

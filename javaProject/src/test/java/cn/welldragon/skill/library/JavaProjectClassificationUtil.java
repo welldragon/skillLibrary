@@ -11,6 +11,37 @@ import java.util.*;
 import java.util.function.Consumer;
 
 public class JavaProjectClassificationUtil {
+
+    @Test
+    public void findAllSpringDependency() {
+        File javaSrcDirFile = new File("../../../git_ke/helicarrier/jy-helicarrier-start/src/main/java");
+        recursiveJavaFile(javaSrcDirFile, file -> {
+            try {
+//                System.out.println(file.getCanonicalPath());
+                List<String> lines = Files.readLines(file, Charset.defaultCharset());
+                for (int i = 0; i < lines.size(); i++) {
+                    String line = lines.get(i).trim();
+                    if ("".equals(line)) continue;
+                    if (line.startsWith("@Component")
+                            || line.startsWith("@Controller")
+                            || line.startsWith("@Repository")
+                            || line.startsWith("@Service")
+                    ) {
+                        for (int j = i; j < lines.size(); j++) {
+                            String nextLine = lines.get(j).trim();
+                            if ("".equals(line)) continue;
+                            if (nextLine.startsWith("public class ")) {
+                                System.out.println(line);
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
     @Test
     public void findAllImport() {
         Set<String> importSet = new TreeSet<>();

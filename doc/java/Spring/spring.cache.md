@@ -36,6 +36,10 @@ public @interface Cacheable {
 }
 ```
 
+这里没有设置超时的地方，如果实现是redis，实现RedisCacheManager
+
+RedisCacheConfiguration的ttl
+
 # Key Generation
 
 ```java

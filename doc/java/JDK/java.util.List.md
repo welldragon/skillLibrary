@@ -42,3 +42,34 @@ public static <T> void sort(T[] a, Comparator<? super T> c) {
 * 可逆：sgn(x.compareTo(y)) == -sgn(y.compareTo(x))
 * 可传递： (x.compareTo(y)>0 && y.compareTo(z)>0)表示x.compareTo(z)>0
 * 相等：x.compareTo(y)==0意味着sgn(x.compareTo(z)) == sgn(y.compareTo(z))
+
+5、排序不报错，但返回结果顺序不稳定
+
+```java
+// badcase
+private static final Comparator<ProjectView> VIEW_COMPARATOR = (a, b) -> {
+    if (a.getProjectType() < b.getProjectType()) {
+        return -1;
+    } else if (a.getProjectType() > b.getProjectType()) {
+        return 1;
+    } else if (a.getBeginDate().compareTo(DateDefault.BEGIN) == 0) { // a和b的比较和对方的值无关
+        return 1;
+    } else if (b.getBeginDate().compareTo(DateDefault.BEGIN) == 0) { // a和b的比较和对方的值无关
+        return -1;
+    } else {
+        return a.getBeginDate().compareTo(b.getBeginDate());
+    }
+};
+```
+
+6、需要两字段排序的情况
+
+```java
+default Comparator<T> thenComparing(Comparator<? super T> other) {
+    Objects.requireNonNull(other);
+    return (Comparator<T> & Serializable) (c1, c2) -> {
+        int res = compare(c1, c2);
+        return (res != 0) ? res : other.compare(c1, c2); // 当比较器1判断相等时，使用比较器2
+    };
+}
+```

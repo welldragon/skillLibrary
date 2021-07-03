@@ -59,6 +59,9 @@ public interface Supplier<T> {
 ## Runnable
 ```java
 public interface Runnable {
+    /**
+    * 无入，无出
+    */
     public abstract void run();
 }
 ```

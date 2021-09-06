@@ -1,5 +1,5 @@
 ```java
-public class LinkedList<E>
+public class LinkedList<E> {
 
     // 双向链表
     private static class Node<E> {

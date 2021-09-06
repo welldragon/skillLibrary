@@ -1,17 +1,21 @@
 ```java
 public class HashMap<K,V> {
-    /*
-     * 负载因子
+
+    /**
+     * 默认值为什么是0.75？二项分布、log(2)=0.68，接近0.75
      */
     static final float DEFAULT_LOAD_FACTOR = 0.75f;
+    /**
+     * 负载因子，最大容量*负载因子=阈值，当前容量超过阈值触发扩容
+     */
     final float loadFactor;
 
-    /*
+    /**
      * 阈值
      */
     int threshold;
 
-    /*
+    /**
      * 数组
      */
     transient Node<K,V>[] table;
@@ -185,5 +189,10 @@ public class HashMap<K,V> {
         }
         return newTab;
     }
+
+    // 空实现，各种回调
+    void afterNodeAccess(Node<K,V> p) { }
+    void afterNodeInsertion(boolean evict) { }
+    void afterNodeRemoval(Node<K,V> p) { }
 }
 ```
